@@ -2,6 +2,7 @@ package pt.global.device.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pt.global.device.domain.dto.DeviceDomainDTO;
 import pt.global.device.domain.persistence.model.DeviceDomain;
 import pt.global.device.domain.persistence.model.StateEnum;
@@ -9,10 +10,10 @@ import pt.global.device.domain.persistence.repository.DeviceDomainRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DeviceDomainService {
 
     /**
@@ -48,7 +49,7 @@ public class DeviceDomainService {
      *                          to update fields other than the state while the entity is in use.
      */
     public DeviceDomainDTO updateDeviceDomain(Long id, DeviceDomainDTO dto) {
-        DeviceDomain domain = deviceDomainRepository.findFirstById(id).orElseThrow(() -> new RuntimeException("Device domain not found"));
+        DeviceDomain domain = deviceDomainRepository.findById(id).orElseThrow(() -> new RuntimeException("Device domain not found"));
         if (!domain.getState().equals(StateEnum.IN_USE)) {
             domain.setName(dto.getName());
             domain.setBrand(dto.getBrand());
@@ -69,7 +70,7 @@ public class DeviceDomainService {
      * @throws RuntimeException if the entity is in use or not found in the database.
      */
     public void deleteDeviceDomain(Long id) {
-        DeviceDomain domain = deviceDomainRepository.findFirstById(id).orElseThrow(() -> new RuntimeException("Device domain not found"));
+        DeviceDomain domain = deviceDomainRepository.findById(id).orElseThrow(() -> new RuntimeException("Device domain not found"));
         if (domain.getState().equals(StateEnum.IN_USE)) {
             throw new RuntimeException("Device domain in use");
         }
@@ -81,10 +82,11 @@ public class DeviceDomainService {
      *
      * @param id The unique identifier of the Device Domain to retrieve.
      * @return A {@link DeviceDomainDTO} representing the retrieved entity, or {@code null} if not found.
+     * @throws RuntimeException if the entity is in use or not found in the database.
      */
     public DeviceDomainDTO getDeviceDomainById(Long id) {
-        Optional<DeviceDomain> opt = deviceDomainRepository.findById(id);
-        return opt.map(this::convertToDto).orElse(null);
+        DeviceDomain domain = deviceDomainRepository.findById(id).orElseThrow(() -> new RuntimeException("Device domain not found"));
+        return convertToDto(domain);
     }
 
     /**

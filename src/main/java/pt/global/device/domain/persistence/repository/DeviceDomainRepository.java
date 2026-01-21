@@ -11,8 +11,6 @@ import java.util.Optional;
 @Repository
 public interface DeviceDomainRepository extends JpaRepository <DeviceDomain, Long>{
 
-    Optional<DeviceDomain> findFirstById(Long id);
-
     List<DeviceDomain> findByBrandContaining(String brand);
 
     List<DeviceDomain> findByState(StateEnum state);
