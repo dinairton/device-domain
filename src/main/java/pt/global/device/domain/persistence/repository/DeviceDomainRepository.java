@@ -6,7 +6,6 @@ import pt.global.device.domain.persistence.model.DeviceDomain;
 import pt.global.device.domain.persistence.model.StateEnum;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface DeviceDomainRepository extends JpaRepository <DeviceDomain, Long>{
