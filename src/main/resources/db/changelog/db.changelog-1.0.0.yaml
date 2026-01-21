@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - preConditions:
+      - runningAs:
+          username: root
+  - changeSet:
+      id: 1.0.0
+      author: dinairton.rodrigues
+      labels: table of devices domain
+      context: test
+      changes:
+        - createTable:
+            tableName: device_domain
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: brand
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: state
+                  type: tinyint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: creation_date_time
+                  type: datetime
+                  constraints:
+                    nullable: false
