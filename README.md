@@ -53,9 +53,8 @@ This will download all required dependencies and create a JAR file in the `targe
 
    ```properties
    spring.datasource.url=jdbc:mariadb://localhost:3306/device_domain......
-   spring.datasource.username=your_username
-   spring.datasource.password=your_password
-   spring.jpa.hibernate.ddl-auto=update
+   spring.datasource.username=root
+   spring.datasource.password=root
    ```
 
 2. Start the application using Maven:
@@ -72,6 +71,16 @@ This will download all required dependencies and create a JAR file in the `targe
 
 You can use Docker to build and run the application easily. Follow these steps:
 
+### Docker Image MARIADB
+
+```bash
+docker network create app-network
+```
+
+```bash
+docker run -d --name mariadb --network app-network -e MARIADB_ROOT_PASSWORD=root -p 3306:3306 mariadb:latest
+```
+
 ### Build the Docker Image
 
 ```bash
@@ -81,7 +90,7 @@ docker build -t device-domain .
 ### Run the Docker Container
 
 ```bash
-docker run -d -p 8085:8085 --name device-domain-container device-domain
+docker run -d --network app-network -p 8085:8085 --name device-domain-container device-domain
 ```
 
 The application will now be running on `http://localhost:8085`.

@@ -94,7 +94,7 @@ public class DeviceDomainController {
      */
     @PostMapping
     public ResponseEntity<DeviceDomainDTO> create(@RequestBody DeviceDomainDTO dto) {
-        logger.info("Create device domain with ID: {}", dto.getId());
+        logger.info("Create device domain....");
         return ResponseEntity.ok(service.createDeviceDomain(dto));
     }
 
