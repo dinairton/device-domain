@@ -88,20 +88,15 @@ The application will now be running on `http://localhost:8085`.
 
 ---
 
-## Application Configuration
+### Swagger Configuration
+By default, SpringDoc OpenAPI auto-configures Swagger for most Spring Boot applications. You can customize Swagger settings if needed, but no manual steps are required for basic setup.
 
-Database configurations can be managed in the `application.properties` file located in the `src/main/resources` folder.
-
-### Example Configuration
-
-```properties
-spring.datasource.url=jdbc:mariadb://localhost:3306/device_db
-spring.datasource.username=your_username
-spring.datasource.password=your_password
-spring.jpa.hibernate.ddl-auto=update
-```
+Endpoints enabled by Swagger:
+- **Swagger UI**: `http://localhost:8085/swagger-ui.html`
+- **OpenAPI Specification**: `http://localhost:8085/v3/api-docs`
 
 ---
+
 
 ## Running Tests
 

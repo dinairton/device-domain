@@ -6,7 +6,6 @@ databaseChangeLog:
       id: 1.0.0
       author: dinairton.rodrigues
       labels: table of devices domain
-      context: test
       changes:
         - createTable:
             tableName: device_domain
@@ -28,7 +27,6 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
-                    unique: true
               - column:
                   name: state
                   type: tinyint
