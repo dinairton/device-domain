@@ -1,5 +1,6 @@
 package pt.global.device.domain.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +94,7 @@ public class DeviceDomainController {
      * @return The newly created DeviceDomainDTO object (HTTP 200).
      */
     @PostMapping
-    public ResponseEntity<DeviceDomainDTO> create(@RequestBody DeviceDomainDTO dto) {
+    public ResponseEntity<DeviceDomainDTO> create(@Valid @RequestBody DeviceDomainDTO dto) {
         logger.info("Create device domain....");
         return ResponseEntity.ok(service.createDeviceDomain(dto));
     }
@@ -105,9 +106,9 @@ public class DeviceDomainController {
      * @return An HTTP 200 status if the deletion was successful.
      */
     @DeleteMapping(value="/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         logger.info("Delete device domain with ID: {}", id);
         service.deleteDeviceDomain(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Device domain deleted successfully");
     }
 }

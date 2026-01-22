@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.global.device.domain.dto.DeviceDomainDTO;
+import pt.global.device.domain.exception.InvalidStateException;
+import pt.global.device.domain.exception.ResourceNotFoundException;
 import pt.global.device.domain.persistence.model.DeviceDomain;
 import pt.global.device.domain.persistence.model.StateEnum;
 import pt.global.device.domain.persistence.repository.DeviceDomainRepository;
@@ -25,11 +27,11 @@ public class DeviceDomainService {
     /**
      * Creates a new Device Domain entity in the database.
      *
-     * @param deviceDomain A {@link DeviceDomainDTO} containing information for the new Device Domain.
+     * @param dto A {@link DeviceDomainDTO} containing information for the new Device Domain.
      * @return The created {@link DeviceDomainDTO} with the generated ID and creation timestamp.
      */
-    public DeviceDomainDTO createDeviceDomain(DeviceDomainDTO deviceDomain) {
-        DeviceDomain domain = convertToModel(deviceDomain);
+    public DeviceDomainDTO createDeviceDomain(DeviceDomainDTO dto) {
+        DeviceDomain domain = convertToModel(dto);
         domain.setCreationDateTime(LocalDateTime.now());
         return convertToDto(deviceDomainRepository.save(domain));
     }
@@ -49,12 +51,21 @@ public class DeviceDomainService {
      *                          to update fields other than the state while the entity is in use.
      */
     public DeviceDomainDTO updateDeviceDomain(Long id, DeviceDomainDTO dto) {
-        DeviceDomain domain = deviceDomainRepository.findById(id).orElseThrow(() -> new RuntimeException("Device domain not found"));
-        if (!domain.getState().equals(StateEnum.IN_USE)) {
-            domain.setName(dto.getName());
-            domain.setBrand(dto.getBrand());
+        DeviceDomain domain = deviceDomainRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Device domain not found"));
+
+        if (domain.getState().equals(StateEnum.IN_USE) && (dto.getName()!=null || dto.getBrand()!=null)) {
+            throw new InvalidStateException("Cannot update Name and Brand while device domain is in use");
         }
-        domain.setState(dto.getState());
+
+        if (dto.getName() != null)
+            domain.setName(dto.getName());
+
+        if (dto.getBrand() != null)
+            domain.setBrand(dto.getBrand());
+
+        if (dto.getState() != null)
+           domain.setState(dto.getState());
+
         deviceDomainRepository.save(domain);
         return convertToDto(domain);
     }
@@ -70,9 +81,9 @@ public class DeviceDomainService {
      * @throws RuntimeException if the entity is in use or not found in the database.
      */
     public void deleteDeviceDomain(Long id) {
-        DeviceDomain domain = deviceDomainRepository.findById(id).orElseThrow(() -> new RuntimeException("Device domain not found"));
+        DeviceDomain domain = deviceDomainRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Device domain not found"));
         if (domain.getState().equals(StateEnum.IN_USE)) {
-            throw new RuntimeException("Device domain in use");
+            throw new InvalidStateException("Device domain in use");
         }
         deviceDomainRepository.deleteById(id);
     }
@@ -85,7 +96,7 @@ public class DeviceDomainService {
      * @throws RuntimeException if the entity is in use or not found in the database.
      */
     public DeviceDomainDTO getDeviceDomainById(Long id) {
-        DeviceDomain domain = deviceDomainRepository.findById(id).orElseThrow(() -> new RuntimeException("Device domain not found"));
+        DeviceDomain domain = deviceDomainRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Device domain not found"));
         return convertToDto(domain);
     }
 

@@ -7,6 +7,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pt.global.device.domain.dto.DeviceDomainDTO;
+import pt.global.device.domain.exception.InvalidStateException;
+import pt.global.device.domain.exception.ResourceNotFoundException;
 import pt.global.device.domain.persistence.model.StateEnum;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +23,7 @@ class DeviceDomainServiceIntegrationTest {
     @Test
     @Order(1)
     void findAllDevices() {
-        assertEquals(1, service.getAllDeviceDomains().size());
+        assertEquals(2, service.getAllDeviceDomains().size());
     }
 
 
@@ -63,14 +65,20 @@ class DeviceDomainServiceIntegrationTest {
         assertEquals(2, service.getAllByState(StateEnum.AVAILABLE).size());
     }
 
-
     @Test
     @Order(6)
+    void deleteDeviceDomainInUse() {
+        assertThrows(InvalidStateException.class, () -> service.deleteDeviceDomain(200L));
+    }
+
+
+    @Test
+    @Order(7)
     void deleteDeviceDomain() {
         service.deleteDeviceDomain(100L);
 
-        assertThrows(RuntimeException.class, () -> service.getDeviceDomainById(100L));
-
+        assertThrows(ResourceNotFoundException.class, () -> service.getDeviceDomainById(100L));
     }
+
 
 }
